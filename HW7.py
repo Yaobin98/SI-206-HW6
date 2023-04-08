@@ -189,12 +189,13 @@ def position_birth_search(position, age, cur, conn):
 #     the passed year. 
 
 def make_winners_table(data, cur, conn):
-    cur.execute('''CREATE TABLE Winners
+    #print(data)
+    cur.execute('''CREATE TABLE IF NOT EXISTS Winners
                    (id INTEGER PRIMARY KEY,
                     full_name TEXT)''')
     conn.commit()
     
-    for team in data['winner']:
+    for team in data['seasons']:
         cur.execute('''INSERT OR IGNORE INTO Winners (id, full_name) 
                        VALUES (?, ?)''', (team['id'], team['name']))
         conn.commit()
