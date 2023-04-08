@@ -197,7 +197,7 @@ def make_winners_table(data, cur, conn):
     
     for team in data['seasons']:
         cur.execute('''INSERT OR IGNORE INTO Winners (id, full_name) 
-                       VALUES (?, ?)''', (team['id'], team['name']))
+                       VALUES (?, ?)''', (team['id'], team['winner']))
         conn.commit()
 
 def make_seasons_table(data, cur, conn):
