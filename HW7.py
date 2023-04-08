@@ -201,7 +201,27 @@ def make_winners_table(data, cur, conn):
         conn.commit()
 
 def make_seasons_table(data, cur, conn):
-    pass
+    cur.execute('''
+        CREATE TABLE IF NOT EXISTS Seasons (
+            id INTEGER PRIMARY KEY,
+            winner_id TEXT NOT NULL,
+            end_year INTEGER NOT NULL
+        );
+    ''')
+    conn.commit()
+    for season in data['seasons']:
+        if 'winner' not in season:
+            continue
+        winner_name = season['winner']
+        cur.execute('SELECT id FROM Winners WHERE name = ?', (winner_name,))
+        result = cur.fetchone()
+        if result is None:
+            continue
+        winner_id = result[0]
+        season_id = season['id']
+        end_year = int(season_id[:4])
+        cur.execute('INSERT INTO Seasons (id, winner_id, end_year) VALUES (?, ?, ?)', (season_id, winner_id, end_year))
+        conn.commit()
 
 def winners_since_search(year, cur, conn):
     pass
@@ -260,16 +280,16 @@ class TestAllMethods(unittest.TestCase):
         
         
 
-    # # test extra credit
-    # def test_make_winners_table(self):
-    #     self.cur2.execute('SELECT * from Winners')
-    #     winners_list = self.cur2.fetchall()
+    # test extra credit
+    def test_make_winners_table(self):
+        self.cur2.execute('SELECT * from Winners')
+        winners_list = self.cur2.fetchall()
 
     #     pass
 
-    # def test_make_seasons_table(self):
-    #     self.cur2.execute('SELECT * from Seasons')
-    #     seasons_list = self.cur2.fetchall()
+    def test_make_seasons_table(self):
+        self.cur2.execute('SELECT * from Seasons')
+        seasons_list = self.cur2.fetchall()
 
     #     pass
 
